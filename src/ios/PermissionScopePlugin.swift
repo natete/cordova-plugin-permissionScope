@@ -1,11 +1,13 @@
 import Foundation
+import CoreLocation
 
 @objc(PermissionScopePlugin) class PermissionScopePlugin: CDVPlugin {
-  private let LOG_TAG = "PermissionScopePlugin"
-  private var permissionMethods: [String: () -> NSObject]?
-  private var requestMethods: [String: () -> Void]?
-  private var defaultConfig: [String: Any]?
-  private var pscope: PermissionScope?
+  fileprivate let LOG_TAG = "PermissionScopePlugin"
+  fileprivate var permissionMethods: [String: () -> NSObject]?
+  fileprivate var requestMethods: [String: () -> Void]?
+  fileprivate var hasMethods: [String: () -> PermissionStatus]?
+  fileprivate var defaultConfig: [String: Any]?
+  fileprivate var pscope: PermissionScope?
 
   override func pluginInitialize() {
     super.pluginInitialize()
@@ -39,6 +41,20 @@ import Foundation
       "Motion": { self.pscope!.requestMotion() }
     ]
 
+   self.hasMethods = [
+      "Notifications": { self.pscope!.statusNotifications() },
+      "LocationInUse": { self.pscope!.statusLocationInUse() },
+      "LocationAlways": { self.pscope!.statusLocationAlways() },
+      "Contacts": { self.pscope!.statusContacts() },
+      "Events": { self.pscope!.statusEvents() },
+      "Microphone": { self.pscope!.statusMicrophone() },
+      "Camera": { self.pscope!.statusCamera() },
+      "Photos": { self.pscope!.statusPhotos() },
+      "Reminders": { self.pscope!.statusReminders() },
+      "Bluetooth": { self.pscope!.statusBluetooth() },
+      "Motion": { self.pscope!.statusMotion() }
+    ]
+
     self.defaultConfig = [
       "headerLabel": self.pscope?.headerLabel.text,
       "bodyLabel": self.pscope?.bodyLabel.text,
@@ -64,19 +80,19 @@ import Foundation
 
   }
 
-  private func isDefined(configItem: AnyObject!) -> Bool {
+  fileprivate func isDefined(_ configItem: AnyObject!) -> Bool {
     return configItem != nil && !(configItem as! String).isEmpty
   }
 
-  func initialize(command: CDVInvokedUrlCommand) {
-    let config = command.argumentAtIndex(0)
+  func initialize(_ command: CDVInvokedUrlCommand) {
+    let config = command.argument(at: 0)
 
     self.pscope!.configuredPermissions = []
 
     self.pscope!.headerLabel.text = self.defaultConfig!["headerLabel"] as? String
     self.pscope!.bodyLabel.text = self.defaultConfig!["bodyLabel"] as? String
     self.pscope!.closeButtonTextColor = (self.defaultConfig!["closeButtonTextColor"] as? UIColor)!
-    self.pscope!.closeButton.setTitle(self.defaultConfig!["closeButtonTitle"] as? String, forState: UIControlState.Normal)
+    self.pscope!.closeButton.setTitle(self.defaultConfig!["closeButtonTitle"] as? String, for: UIControlState())
     self.pscope!.permissionButtonTextColor = (self.defaultConfig!["permissionButtonTextColor"] as? UIColor)!
     self.pscope!.permissionButtonBorderColor = (self.defaultConfig!["permissionButtonBorderColor"] as? UIColor)!
     self.pscope!.closeOffset = (self.defaultConfig!["closeOffset"] as? CGSize)!
@@ -107,7 +123,7 @@ import Foundation
 
       if (self.isDefined(config["closeButtonTitle"])) {
         self.pscope!.closeButton.setTitle((config["closeButtonTitle"] as? String)!
-          , forState: UIControlState.Normal)
+          , for: UIControlState())
       }
       self.pscope!.closeButton.sizeToFit()
 
@@ -127,10 +143,10 @@ import Foundation
         self.pscope!.unauthorizedButtonColor = UIColor.init(hexString: (config["unauthorizedButtonColor"] as? String)!)
       }
       if (self.isDefined(config["permissionButtonΒorderWidth"])) {
-        self.pscope!.permissionButtonΒorderWidth = CGFloat(NSNumberFormatter().numberFromString((config["permissionButtonΒorderWidth"] as? String)!)!)
+        self.pscope!.permissionButtonΒorderWidth = CGFloat(NumberFormatter().number(from: (config["permissionButtonΒorderWidth"] as? String)!)!)
       }
       if (self.isDefined(config["permissionButtonCornerRadius"]!)) {
-        self.pscope!.permissionButtonCornerRadius = CGFloat(NSNumberFormatter().numberFromString(config["permissionButtonCornerRadius"] as! String)!)
+        self.pscope!.permissionButtonCornerRadius = CGFloat(NumberFormatter().number(from: config["permissionButtonCornerRadius"] as! String)!)
       }
       if (self.isDefined(config["permissionLabelColor"])) {
         self.pscope!.permissionLabelColor = UIColor.init(hexString: (config["permissionLabelColor"] as? String)!)
@@ -162,38 +178,61 @@ import Foundation
     }
 
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-    self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
 
-  func addPermission(command: CDVInvokedUrlCommand) {
-    let message = command.argumentAtIndex(1) != nil ? "\(command.argumentAtIndex(1))" : ""
-    pscope!.addPermission(self.permissionMethods![command.argumentAtIndex(0) as! String]!() as! Permission, message: message)
+  func addPermission(_ command: CDVInvokedUrlCommand) {
+    let message = command.argument(at: 1) != nil ? "\(command.argument(at: 1))" : ""
+    pscope!.addPermission(self.permissionMethods![command.argument(at: 0) as! String]!() as! Permission, message: message)
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-    self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
 
-  func show(command: CDVInvokedUrlCommand) {
+  func show(_ command: CDVInvokedUrlCommand) {
     pscope!.show()
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-    self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
 
-  func requestPermission(command: CDVInvokedUrlCommand) {
-    let type = command.argumentAtIndex(0) as! String
+  func hasPermission(_ command: CDVInvokedUrlCommand) {
+    let type = command.argument(at: 0) as! String
+
+    self.pscope!.viewControllerForAlerts = self.viewController
+    let result = self.hasMethods![type]!()
+    var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+    switch result {
+       case .unknown:
+         pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+         break
+       case .unauthorized:
+         pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
+         break
+       case .authorized:
+         pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+        break
+       default:
+        pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
+    }
+    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+  }
+
+
+  func requestPermission(_ command: CDVInvokedUrlCommand) {
+    let type = command.argument(at: 0) as! String
 
     self.pscope!.viewControllerForAlerts = self.viewController
     self.requestMethods![type]!()
 
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-    self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
 }
 
 extension UIColor {
   convenience init(hexString: String, alpha: Double = 1.0) {
-    let hex = hexString.stringByTrimmingCharactersInSet(NSCharacterSet.alphanumericCharacterSet().invertedSet)
+    let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
     var int = UInt32()
-    NSScanner(string: hex).scanHexInt(&int)
+    Scanner(string: hex).scanHexInt32(&int)
     let r, g, b: UInt32
     switch hex.characters.count {
     case 3: // RGB (12-bit)
