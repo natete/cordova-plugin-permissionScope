@@ -618,12 +618,13 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
                 self.getResultsForConfig { results in
-                    guard let notificationResult = results!.first { $0.type == .notifications } else { return }
+                  if let notificationResult = results!.first ({ $0.type == .notifications }) {
                     if notificationResult.status == .unknown {
-                        self.showDeniedAlert(notificationResult.type)
+                      self.showDeniedAlert(notificationResult.type)
                     } else {
-                        self.detectAndCallback()
+                      self.detectAndCallback()
                     }
+                  }
                 }
         })
     }
