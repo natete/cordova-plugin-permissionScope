@@ -248,18 +248,18 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         // offset the header from the content center, compensate for the content's offset
         headerLabel.center = contentView.center
-        headerLabel.frame.offsetInPlace(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
-        headerLabel.frame.offsetInPlace(dx: 0, dy: -((dialogHeight/2)-50))
+        headerLabel.frame.offsetBy(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
+        headerLabel.frame.offsetBy(dx: 0, dy: -((dialogHeight/2)-50))
 
         // ... same with the body
         bodyLabel.center = contentView.center
-        bodyLabel.frame.offsetInPlace(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
-        bodyLabel.frame.offsetInPlace(dx: 0, dy: -((dialogHeight/2)-100))
+        bodyLabel.frame.offsetBy(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
+        bodyLabel.frame.offsetBy(dx: 0, dy: -((dialogHeight/2)-100))
 
         closeButton.center = contentView.center
-        closeButton.frame.offsetInPlace(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
-        closeButton.frame.offsetInPlace(dx: 105, dy: -((dialogHeight/2)-20))
-        closeButton.frame.offsetInPlace(dx: self.closeOffset.width, dy: self.closeOffset.height)
+        closeButton.frame.offsetBy(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
+        closeButton.frame.offsetBy(dx: 105, dy: -((dialogHeight/2)-20))
+        closeButton.frame.offsetBy(dx: self.closeOffset.width, dy: self.closeOffset.height)
         if let _ = closeButton.imageView?.image {
             closeButton.setTitle("", for: UIControlState())
         }
@@ -269,8 +269,8 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         var index = 0
         for button in permissionButtons {
             button.center = contentView.center
-            button.frame.offsetInPlace(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
-            button.frame.offsetInPlace(dx: 0, dy: -((dialogHeight/2)-160) + CGFloat(index * baseOffset))
+            button.frame.offsetBy(dx: -contentView.frame.origin.x, dy: -contentView.frame.origin.y)
+            button.frame.offsetBy(dx: 0, dy: -((dialogHeight/2)-160) + CGFloat(index * baseOffset))
 
             let type = configuredPermissions[index].type
 
@@ -290,8 +290,8 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
                                     let label = self.permissionLabels[index]
                                     label.center = self.contentView.center
-                                    label.frame.offsetInPlace(dx: -self.contentView.frame.origin.x, dy: -self.contentView.frame.origin.y)
-                                    label.frame.offsetInPlace(dx: 0, dy: -((dialogHeight/2)-205) + CGFloat(index * baseOffset))
+                                    label.frame.offsetBy(dx: -self.contentView.frame.origin.x, dy: -self.contentView.frame.origin.y)
+                                    label.frame.offsetBy(dx: 0, dy: -((dialogHeight/2)-205) + CGFloat(index * baseOffset))
 
                                     index = index + 1
             })
@@ -961,7 +961,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         motionManager.queryActivityStarting(from: today,
                                                     to: today,
                                                     to: .main) { activities, error in
-                                                        if let error = error, error.code == Int(CMErrorMotionActivityNotAuthorized.rawValue) {
+                                                        if let error = error, error._code == Int(CMErrorMotionActivityNotAuthorized.rawValue) {
                                                             self.motionPermissionStatus = .unauthorized
                                                         } else {
                                                             self.motionPermissionStatus = .authorized
@@ -1160,15 +1160,14 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         alert.addAction(UIAlertAction(title: deniedDefaultActionTitle,
             style: .default,
             handler: { action in
-                NotificationCenter.default.addObserver(self, selector: "self.appForegroundedAfterSettings", name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+                NotificationCenter.default.addObserver(self, selector: #selector(self.appForegroundedAfterSettings), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 
                 let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)
                 UIApplication.shared.openURL(settingsUrl!)
         }))
 
         DispatchQueue.main.async {
-            self.viewControllerForAlerts?.present(alert,
-                                                                animated: true, completion: nil)
+            self.viewControllerForAlerts?.present(alert, animated: true, completion: nil)
         }
     }
 
@@ -1199,7 +1198,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         alert.addAction(UIAlertAction(title: disabledDefaultActionTitle,
             style: .default,
             handler: { action in
-                NotificationCenter.default.addObserver(self, selector: "self.appForegroundedAfterSettings", name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+                NotificationCenter.default.addObserver(self, selector: #selector(self.appForegroundedAfterSettings), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 
                 let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)
                 UIApplication.shared.openURL(settingsUrl!)
