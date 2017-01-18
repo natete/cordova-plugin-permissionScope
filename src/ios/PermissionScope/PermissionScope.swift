@@ -91,7 +91,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     }()
 
     /// Default status for Core Motion Activity
-    var motionPermissionStatus: PermissionStatus = .Unknown
+    var motionPermissionStatus: PermissionStatus = PermissionStatus.Unknown
 
     // MARK: - Internal state and resolution
 
