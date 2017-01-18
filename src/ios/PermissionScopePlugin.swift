@@ -85,7 +85,7 @@ import CoreLocation
   }
 
   func initialize(command: CDVInvokedUrlCommand) {
-    let config = command.argument(at: 0) as? [String: String]
+    let config = command.argumentAtIndex(0)
 
     self.pscope!.configuredPermissions = []
 
@@ -232,7 +232,7 @@ extension UIColor {
   convenience init(hexString: String, alpha: Double = 1.0) {
     let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
     var int = UInt32()
-    Scanner(string: hex).scanHexInt(&int)
+    Scanner(string: hex).scanHexInt32(&int)
     let r, g, b: UInt32
     switch hex.characters.count {
     case 3: // RGB (12-bit)
