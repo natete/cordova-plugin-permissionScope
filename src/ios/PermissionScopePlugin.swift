@@ -85,7 +85,7 @@ import CoreLocation
   }
 
   func initialize(command: CDVInvokedUrlCommand) {
-    let config = command.argument(at: 0) as! [String, String]
+    let config = command.argument(at: 0) as! [String: String]
 
     self.pscope!.configuredPermissions = []
 
