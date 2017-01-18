@@ -91,7 +91,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     }()
 
     /// Default status for Core Motion Activity
-    var motionPermissionStatus: PermissionStatus = .unknown
+    var motionPermissionStatus: PermissionStatus = .Unknown
 
     // MARK: - Internal state and resolution
 
@@ -120,7 +120,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     func allAuthorized(_ completion: (Bool) -> Void ) {
         getResultsForConfig{ results in
             let result = results
-                .first { $0.status != .authorized }
+                .first { $0.status != .Authorized }
                 .isNil
             completion(result)
         }
@@ -134,9 +134,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
      */
     func requiredAuthorized(_ completion: (Bool) -> Void ) {
         getResultsForConfig{ results in
-            let result = results
-                .first { $0.status != .authorized }
-                .isNil
+          let result = results.first(where: { $0.status != .Authorized }).isNil
             completion(result)
         }
     }
@@ -277,13 +275,13 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
             statusForPermission(type,
                                 completion: { currentStatus in
                                     let prettyDescription = type.prettyDescription
-                                    if currentStatus == .authorized {
+                                    if currentStatus == .Authorized {
                                         self.setButtonAuthorizedStyle(button)
                                         button.setTitle("Allowed \(prettyDescription)".localized.uppercased(), for: UIControlState())
-                                    } else if currentStatus == .unauthorized {
+                                    } else if currentStatus == .Unauthorized {
                                         self.setButtonUnauthorizedStyle(button)
                                         button.setTitle("Denied \(prettyDescription)".localized.uppercased(), for: UIControlState())
-                                    } else if currentStatus == .disabled {
+                                    } else if currentStatus == .Disabled {
                                         //                setButtonDisabledStyle(button)
                                         button.setTitle("\(prettyDescription) Disabled".localized.uppercased(), for: UIControlState())
                                     }
@@ -314,9 +312,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         configuredPermissions.append(permission)
         permissionMessages[permission.type] = message
 
-        if permission.type == .bluetooth && askedBluetooth {
+        if permission.type == .Bluetooth && askedBluetooth {
             triggerBluetoothStatusUpdate()
-        } else if permission.type == .motion && askedMotion {
+        } else if permission.type == .Motion && askedMotion {
             triggerMotionStatusUpdate()
         }
     }
@@ -339,7 +337,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         // this is a bit of a mess, eh?
         switch type {
-        case .locationAlways, .locationInUse:
+        case .LocationAlways, .LocationInUse:
             button.setTitle("Enable \(type.prettyDescription)".localized.uppercased(), for: UIControlState())
         default:
             button.setTitle("Allow \(type)".localized.uppercased(), for: UIControlState())
@@ -400,24 +398,24 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
      - returns: Permission status for the requested type.
      */
     open func statusLocationAlways() -> PermissionStatus {
-        guard CLLocationManager.locationServicesEnabled() else { return .disabled }
+        guard CLLocationManager.locationServicesEnabled() else { return .Disabled }
 
         let status = CLLocationManager.authorizationStatus()
         switch status {
         case .authorizedAlways:
-            return .authorized
+            return .Authorized
         case .restricted, .denied:
-            return .unauthorized
+            return .Unauthorized
         case .authorizedWhenInUse:
             // Curious why this happens? Details on upgrading from WhenInUse to Always:
             // [Check this issue](https://github.com/nickoneill/PermissionScope/issues/24)
             if defaults.bool(forKey: Constants.NSUserDefaultsKeys.requestedInUseToAlwaysUpgrade) {
-                return .unauthorized
+                return .Unauthorized
             } else {
-                return .unknown
+                return .Unknown
             }
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -431,16 +429,16 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         let status = statusLocationAlways()
         switch status {
-        case .unknown:
+        case .Unknown:
             if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 defaults.set(true, forKey: Constants.NSUserDefaultsKeys.requestedInUseToAlwaysUpgrade)
                 defaults.synchronize()
             }
             locationManager.requestAlwaysAuthorization()
-        case .unauthorized:
-            self.showDeniedAlert(.locationAlways)
-        case .disabled:
-            self.showDisabledAlert(.locationInUse)
+        case .Unauthorized:
+            self.showDeniedAlert(.LocationAlways)
+        case .Disabled:
+            self.showDisabledAlert(.LocationInUse)
         default:
             break
         }
@@ -452,18 +450,18 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
      - returns: Permission status for the requested type.
      */
     open func statusLocationInUse() -> PermissionStatus {
-        guard CLLocationManager.locationServicesEnabled() else { return .disabled }
+        guard CLLocationManager.locationServicesEnabled() else { return .Disabled }
 
         let status = CLLocationManager.authorizationStatus()
         // if you're already "always" authorized, then you don't need in use
         // but the user can still demote you! So I still use them separately.
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            return .authorized
+            return .Authorized
         case .restricted, .denied:
-            return .unauthorized
+            return .Unauthorized
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -477,12 +475,12 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         let status = statusLocationInUse()
         switch status {
-        case .unknown:
+        case .Unknown:
             locationManager.requestWhenInUseAuthorization()
-        case .unauthorized:
-            self.showDeniedAlert(.locationInUse)
-        case .disabled:
-            self.showDisabledAlert(.locationInUse)
+        case .Unauthorized:
+            self.showDeniedAlert(.LocationInUse)
+        case .Disabled:
+            self.showDisabledAlert(.LocationInUse)
         default:
             break
         }
@@ -500,22 +498,22 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
             let status = CNContactStore.authorizationStatus(for: .contacts)
             switch status {
             case .authorized:
-                return .authorized
+                return .Authorized
             case .restricted, .denied:
-                return .unauthorized
+                return .Unauthorized
             case .notDetermined:
-                return .unknown
+                return .Unknown
             }
         } else {
             // Fallback on earlier versions
             let status = ABAddressBookGetAuthorizationStatus()
             switch status {
             case .authorized:
-                return .authorized
+                return .Authorized
             case .restricted, .denied:
-                return .unauthorized
+                return .Unauthorized
             case .notDetermined:
-                return .unknown
+                return .Unknown
             }
         }
     }
@@ -526,7 +524,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestContacts() {
         let status = statusContacts()
         switch status {
-        case .unknown:
+        case .Unknown:
             if #available(iOS 9.0, *) {
                 CNContactStore().requestAccess(for: .contacts, completionHandler: {
                     success, error in
@@ -537,8 +535,8 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                     self.detectAndCallback()
                 }
             }
-        case .unauthorized:
-            self.showDeniedAlert(.contacts)
+        case .Unauthorized:
+            self.showDeniedAlert(.Contacts)
         default:
             break
         }
@@ -554,12 +552,12 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func statusNotifications() -> PermissionStatus {
         let settings = UIApplication.shared.currentUserNotificationSettings
         if let settingTypes = settings?.types, settingTypes != UIUserNotificationType() {
-            return .authorized
+            return .Authorized
         } else {
             if defaults.bool(forKey: Constants.NSUserDefaultsKeys.requestedNotifications) {
-                return .unauthorized
+                return .Unauthorized
             } else {
-                return .unknown
+                return .Unknown
             }
         }
     }
@@ -618,8 +616,8 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
                 self.getResultsForConfig { results in
-                  if let notificationResult = results.first(where: { $0.type == .notifications }) {
-                    if notificationResult.status == .unknown {
+                  if let notificationResult = results.first(where: { $0.type == .Notifications }) {
+                    if notificationResult.status == .Unknown {
                       self.showDeniedAlert(notificationResult.type)
                     } else {
                       self.detectAndCallback()
@@ -635,7 +633,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestNotifications() {
         let status = statusNotifications()
         switch status {
-        case .unknown:
+        case .Unknown:
             let notificationsPermission = self.configuredPermissions
                 .first { $0 is NotificationsPermission } as? NotificationsPermission
             let notificationsPermissionSet = notificationsPermission?.notificationCategories
@@ -648,11 +646,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                 UIUserNotificationSettings(types: [.alert, .sound, .badge],
                     categories: notificationsPermissionSet)
             )
-        case .unauthorized:
-            showDeniedAlert(.notifications)
-        case .disabled:
-            showDisabledAlert(.notifications)
-        case .authorized:
+        case .Unauthorized:
+            showDeniedAlert(.Notifications)
+        case .Disabled:
+            showDisabledAlert(.Notifications)
+        case .Authorized:
             detectAndCallback()
         }
     }
@@ -668,11 +666,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let recordPermission = AVAudioSession.sharedInstance().recordPermission()
         switch recordPermission {
         case AVAudioSessionRecordPermission.denied:
-            return .unauthorized
+            return .Unauthorized
         case AVAudioSessionRecordPermission.granted:
-            return .authorized
+            return .Authorized
         default:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -682,15 +680,15 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestMicrophone() {
         let status = statusMicrophone()
         switch status {
-        case .unknown:
+        case .Unknown:
             AVAudioSession.sharedInstance().requestRecordPermission({ granted in
                 self.detectAndCallback()
             })
-        case .unauthorized:
-            showDeniedAlert(.microphone)
-        case .disabled:
-            showDisabledAlert(.microphone)
-        case .authorized:
+        case .Unauthorized:
+            showDeniedAlert(.Microphone)
+        case .Disabled:
+            showDisabledAlert(.Microphone)
+        case .Authorized:
             break
         }
     }
@@ -706,11 +704,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         switch status {
         case .authorized:
-            return .authorized
+            return .Authorized
         case .restricted, .denied:
-            return .unauthorized
+            return .Unauthorized
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -720,16 +718,16 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestCamera() {
         let status = statusCamera()
         switch status {
-        case .unknown:
+        case .Unknown:
             AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo,
                                                       completionHandler: { granted in
                                                         self.detectAndCallback()
             })
-        case .unauthorized:
-            showDeniedAlert(.camera)
-        case .disabled:
-            showDisabledAlert(.camera)
-        case .authorized:
+        case .Unauthorized:
+            showDeniedAlert(.Camera)
+        case .Disabled:
+            showDisabledAlert(.Camera)
+        case .Authorized:
             break
         }
     }
@@ -745,11 +743,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = PHPhotoLibrary.authorizationStatus()
         switch status {
         case .authorized:
-            return .authorized
+            return .Authorized
         case .denied, .restricted:
-            return .unauthorized
+            return .Unauthorized
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -759,15 +757,15 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestPhotos() {
         let status = statusPhotos()
         switch status {
-        case .unknown:
+        case .Unknown:
             PHPhotoLibrary.requestAuthorization({ status in
                 self.detectAndCallback()
             })
-        case .unauthorized:
-            self.showDeniedAlert(.photos)
-        case .disabled:
-            showDisabledAlert(.photos)
-        case .authorized:
+        case .Unauthorized:
+            self.showDeniedAlert(.Photos)
+        case .Disabled:
+            showDisabledAlert(.Photos)
+        case .Authorized:
             break
         }
     }
@@ -783,11 +781,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = EKEventStore.authorizationStatus(for: .reminder)
         switch status {
         case .authorized:
-            return .authorized
+            return .Authorized
         case .restricted, .denied:
-            return .unauthorized
+            return .Unauthorized
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -797,13 +795,13 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestReminders() {
         let status = statusReminders()
         switch status {
-        case .unknown:
+        case .Unknown:
             EKEventStore().requestAccess(to: .reminder,
                                                      completion: { granted, error in
                                                         self.detectAndCallback()
             })
-        case .unauthorized:
-            self.showDeniedAlert(.reminders)
+        case .Unauthorized:
+            self.showDeniedAlert(.Reminders)
         default:
             break
         }
@@ -820,11 +818,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = EKEventStore.authorizationStatus(for: .event)
         switch status {
         case .authorized:
-            return .authorized
+            return .Authorized
         case .restricted, .denied:
-            return .unauthorized
+            return .Unauthorized
         case .notDetermined:
-            return .unknown
+            return .Unknown
         }
     }
 
@@ -834,13 +832,13 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestEvents() {
         let status = statusEvents()
         switch status {
-        case .unknown:
+        case .Unknown:
             EKEventStore().requestAccess(to: .event,
                                                      completion: { granted, error in
                                                         self.detectAndCallback()
             })
-        case .unauthorized:
-            self.showDeniedAlert(.events)
+        case .Unauthorized:
+            self.showDeniedAlert(.Events)
         default:
             break
         }
@@ -872,19 +870,19 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         if askedBluetooth{
             triggerBluetoothStatusUpdate()
         } else {
-            return .unknown
+            return .Unknown
         }
 
         let state = (bluetoothManager.state, CBPeripheralManager.authorizationStatus())
         switch state {
         case (.unsupported, _), (.poweredOff, _), (_, .restricted):
-            return .disabled
+            return .Disabled
         case (.unauthorized, _), (_, .denied):
-            return .unauthorized
+            return .Unauthorized
         case (.poweredOn, .authorized):
-            return .authorized
+            return .Authorized
         default:
-            return .unknown
+            return .Unknown
         }
 
     }
@@ -895,11 +893,11 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestBluetooth() {
         let status = statusBluetooth()
         switch status {
-        case .disabled:
-            showDisabledAlert(.bluetooth)
-        case .unauthorized:
-            showDeniedAlert(.bluetooth)
-        case .unknown:
+        case .Disabled:
+            showDisabledAlert(.Bluetooth)
+        case .Unauthorized:
+            showDeniedAlert(.Bluetooth)
+        case .Unknown:
             triggerBluetoothStatusUpdate()
         default:
             break
@@ -940,9 +938,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
     open func requestMotion() {
         let status = statusMotion()
         switch status {
-        case .unauthorized:
-            showDeniedAlert(.motion)
-        case .unknown:
+        case .Unauthorized:
+            showDeniedAlert(.Motion)
+        case .Unknown:
             triggerMotionStatusUpdate()
         default:
             break
@@ -962,9 +960,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                                                     to: today,
                                                     to: .main) { activities, error in
                                                         if let error = error, error._code == Int(CMErrorMotionActivityNotAuthorized.rawValue) {
-                                                            self.motionPermissionStatus = .unauthorized
+                                                            self.motionPermissionStatus = .Unauthorized
                                                         } else {
-                                                            self.motionPermissionStatus = .authorized
+                                                            self.motionPermissionStatus = .Authorized
                                                         }
 
                                                         self.motionManager.stopActivityUpdates()
@@ -1234,27 +1232,27 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         // Get permission status
         let permissionStatus: PermissionStatus
         switch type {
-        case .locationAlways:
+        case .LocationAlways:
             permissionStatus = statusLocationAlways()
-        case .locationInUse:
+        case .LocationInUse:
             permissionStatus = statusLocationInUse()
-        case .contacts:
+        case .Contacts:
             permissionStatus = statusContacts()
-        case .notifications:
+        case .Notifications:
             permissionStatus = statusNotifications()
-        case .microphone:
+        case .Microphone:
             permissionStatus = statusMicrophone()
-        case .camera:
+        case .Camera:
             permissionStatus = statusCamera()
-        case .photos:
+        case .Photos:
             permissionStatus = statusPhotos()
-        case .reminders:
+        case .Reminders:
             permissionStatus = statusReminders()
-        case .events:
+        case .Events:
             permissionStatus = statusEvents()
-        case .bluetooth:
+        case .Bluetooth:
             permissionStatus = statusBluetooth()
-        case .motion:
+        case .Motion:
             permissionStatus = statusMotion()
         }
 
