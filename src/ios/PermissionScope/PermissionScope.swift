@@ -315,9 +315,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         configuredPermissions.append(permission)
         permissionMessages[permission.type] = message
 
-        if permission.type == .Bluetooth && askedBluetooth {
+        if permission.type == .bluetooth && askedBluetooth {
             triggerBluetoothStatusUpdate()
-        } else if permission.type == .Motion && askedMotion {
+        } else if permission.type == .motion && askedMotion {
             triggerMotionStatusUpdate()
         }
     }
@@ -340,7 +340,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         // this is a bit of a mess, eh?
         switch type {
-        case .LocationAlways, .LocationInUse:
+        case .locationAlways, .locationInUse:
             button.setTitle("Enable \(type.prettyDescription)".localized.uppercased(), for: UIControlState())
         default:
             button.setTitle("Allow \(type)".localized.uppercased(), for: UIControlState())
@@ -439,9 +439,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
             }
             locationManager.requestAlwaysAuthorization()
         case .unauthorized:
-            self.showDeniedAlert(.LocationAlways)
+            self.showDeniedAlert(.locationAlways)
         case .disabled:
-            self.showDisabledAlert(.LocationInUse)
+            self.showDisabledAlert(.locationInUse)
         default:
             break
         }
@@ -481,9 +481,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         case .unknown:
             locationManager.requestWhenInUseAuthorization()
         case .unauthorized:
-            self.showDeniedAlert(.LocationInUse)
+            self.showDeniedAlert(.locationInUse)
         case .disabled:
-            self.showDisabledAlert(.LocationInUse)
+            self.showDisabledAlert(.locationInUse)
         default:
             break
         }
@@ -539,7 +539,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                 }
             }
         case .unauthorized:
-            self.showDeniedAlert(.Contacts)
+            self.showDeniedAlert(.contacts)
         default:
             break
         }
@@ -688,9 +688,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                 self.detectAndCallback()
             })
         case .unauthorized:
-            showDeniedAlert(.Microphone)
+            showDeniedAlert(.microphone)
         case .disabled:
-            showDisabledAlert(.Microphone)
+            showDisabledAlert(.microphone)
         case .authorized:
             break
         }
@@ -727,9 +727,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                                                         self.detectAndCallback()
             })
         case .unauthorized:
-            showDeniedAlert(.Camera)
+            showDeniedAlert(.camera)
         case .disabled:
-            showDisabledAlert(.Camera)
+            showDisabledAlert(.camera)
         case .authorized:
             break
         }
@@ -765,9 +765,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                 self.detectAndCallback()
             })
         case .unauthorized:
-            self.showDeniedAlert(.Photos)
+            self.showDeniedAlert(.photos)
         case .disabled:
-            showDisabledAlert(.Photos)
+            showDisabledAlert(.photos)
         case .authorized:
             break
         }
@@ -804,7 +804,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                                                         self.detectAndCallback()
             })
         case .unauthorized:
-            self.showDeniedAlert(.Reminders)
+            self.showDeniedAlert(.reminders)
         default:
             break
         }
@@ -841,7 +841,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                                                         self.detectAndCallback()
             })
         case .unauthorized:
-            self.showDeniedAlert(.Events)
+            self.showDeniedAlert(.events)
         default:
             break
         }
@@ -897,9 +897,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = statusBluetooth()
         switch status {
         case .disabled:
-            showDisabledAlert(.Bluetooth)
+            showDisabledAlert(.bluetooth)
         case .unauthorized:
-            showDeniedAlert(.Bluetooth)
+            showDeniedAlert(.bluetooth)
         case .unknown:
             triggerBluetoothStatusUpdate()
         default:
@@ -942,7 +942,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         let status = statusMotion()
         switch status {
         case .unauthorized:
-            showDeniedAlert(.Motion)
+            showDeniedAlert(.motion)
         case .unknown:
             triggerMotionStatusUpdate()
         default:
@@ -1235,27 +1235,27 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         // Get permission status
         let permissionStatus: PermissionStatus
         switch type {
-        case .LocationAlways:
+        case .locationAlways:
             permissionStatus = statusLocationAlways()
-        case .LocationInUse:
+        case .locationInUse:
             permissionStatus = statusLocationInUse()
-        case .Contacts:
+        case .contacts:
             permissionStatus = statusContacts()
         case .Notifications:
             permissionStatus = statusNotifications()
-        case .Microphone:
+        case .microphone:
             permissionStatus = statusMicrophone()
-        case .Camera:
+        case .camera:
             permissionStatus = statusCamera()
-        case .Photos:
+        case .photos:
             permissionStatus = statusPhotos()
-        case .Reminders:
+        case .reminders:
             permissionStatus = statusReminders()
-        case .Events:
+        case .events:
             permissionStatus = statusEvents()
-        case .Bluetooth:
+        case .bluetooth:
             permissionStatus = statusBluetooth()
-        case .Motion:
+        case .motion:
             permissionStatus = statusMotion()
         }
 
