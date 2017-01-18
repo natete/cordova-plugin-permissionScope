@@ -8,11 +8,11 @@ import CoreLocation
   private var hasMethods: [String: () -> PermissionStatus]?
   private var defaultConfig: [String: Any]?
   private var pscope: PermissionScope?
-
+  
   override func pluginInitialize() {
     super.pluginInitialize()
     self.pscope = PermissionScope()
-
+    
     self.permissionMethods = [
       "Notifications": { NotificationsPermission() },
       "LocationInUse": { LocationWhileInUsePermission() },
@@ -26,7 +26,7 @@ import CoreLocation
       "Bluetooth": { BluetoothPermission() },
       "Motion": { MotionPermission() }
     ]
-
+    
     self.requestMethods = [
       "Notifications": { self.pscope!.requestNotifications() },
       "LocationInUse": { self.pscope!.requestLocationInUse() },
@@ -40,8 +40,8 @@ import CoreLocation
       "Bluetooth": { self.pscope!.requestBluetooth() },
       "Motion": { self.pscope!.requestMotion() }
     ]
-
-   self.hasMethods = [
+    
+    self.hasMethods = [
       "Notifications": { self.pscope!.statusNotifications() },
       "LocationInUse": { self.pscope!.statusLocationInUse() },
       "LocationAlways": { self.pscope!.statusLocationAlways() },
@@ -54,7 +54,7 @@ import CoreLocation
       "Bluetooth": { self.pscope!.statusBluetooth() },
       "Motion": { self.pscope!.statusMotion() }
     ]
-
+    
     self.defaultConfig = [
       "headerLabel": self.pscope!.headerLabel.text as Any,
       "bodyLabel": self.pscope?.bodyLabel.text as Any,
@@ -77,18 +77,18 @@ import CoreLocation
       "disabledCancelActionTitle": self.pscope?.disabledCancelActionTitle as Any,
       "disabledDefaultActionTitle": self.pscope?.disabledDefaultActionTitle as Any
     ]
-
+    
   }
-
+  
   private func isDefined(configItem: AnyObject!) -> Bool {
     return configItem != nil && !(configItem as! String).isEmpty
   }
-
+  
   func initialize(command: CDVInvokedUrlCommand) {
-//    let config = command.argument(at: 0) as! [String: Any]
-
+    //    let config = command.argument(at: 0) as! [String: Any]
+    
     self.pscope!.configuredPermissions = []
-
+    
     self.pscope!.headerLabel.text = self.defaultConfig!["headerLabel"] as? String
     self.pscope!.bodyLabel.text = self.defaultConfig!["bodyLabel"] as? String
     self.pscope!.closeButtonTextColor = (self.defaultConfig!["closeButtonTextColor"] as? UIColor)!
@@ -109,26 +109,23 @@ import CoreLocation
     self.pscope!.disabledAlertMessage = self.defaultConfig!["disabledAlertMessage"] as? String
     self.pscope!.disabledCancelActionTitle = self.defaultConfig!["disabledCancelActionTitle"] as? String
     self.pscope!.disabledDefaultActionTitle = self.defaultConfig!["disabledDefaultActionTitle"] as? String
-
-    if let config = command.argument(at: 0) as? [String: AnyObject] {
-      if let headerLabel = config["headerLabel"] {
-        if (self.isDefined(configItem: headerLabel)) {
-          self.pscope!.headerLabel.text = headerLabel as String
-        }
+    
+    if let config = command.argument(at: 0) as? [String: String] {
+      if (self.isDefined(configItem: config["headerLabel"])) {
+        self.pscope!.headerLabel.text = config["headerLabel"]
       }
       if (self.isDefined(configItem: config["bodyLabel"]!)) {
-        self.pscope!.bodyLabel.text = config["bodyLabel"]! as String
+        self.pscope!.bodyLabel.text = config["bodyLabel"]
       }
       if (self.isDefined(configItem: config["closeButtonTextColor"])) {
-        self.pscope!.closeButtonTextColor = UIColor.init(hexString: (config["closeButtonTextColor"])!)
+        self.pscope!.closeButtonTextColor = UIColor.init(hexString: config["closeButtonTextColor"])
       }
-
+      
       if (self.isDefined(configItem: config["closeButtonTitle"])) {
-        self.pscope!.closeButton.setTitle((config["closeButtonTitle"])!
-          , forState: UIControlState.Normal)
+        self.pscope!.closeButton.setTitle((config["closeButtonTitle"])!, forState: UIControlState.Normal)
       }
       self.pscope!.closeButton.sizeToFit()
-
+      
       if (self.isDefined(configItem: config["permissionButtonTextColor"])) {
         self.pscope!.permissionButtonTextColor = UIColor.init(hexString: (config["permissionButtonTextColor"])!)
       }
@@ -178,53 +175,53 @@ import CoreLocation
         self.pscope!.disabledDefaultActionTitle = (config["disabledDefaultActionTitle"])!
       }
     }
-
+    
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
-
+  
   func addPermission(command: CDVInvokedUrlCommand) {
     let message = command.argument(at: 1) != nil ? "\(command.argument(at: 1))" : ""
     pscope!.addPermission(self.permissionMethods![command.argument(at: 0) as! String]!() as! Permission, message: message)
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
-
+  
   func show(command: CDVInvokedUrlCommand) {
     pscope!.show()
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
-
+  
   func hasPermission(command: CDVInvokedUrlCommand) {
     let type = command.argument(at: 0) as! String
-
+    
     self.pscope!.viewControllerForAlerts = self.viewController
     let result = self.hasMethods![type]!()
     var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
     switch result {
-       case .unknown:
-         pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-         break
-       case .unauthorized:
-         pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
-         break
-       case .authorized:
-         pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        break
-       default:
-        pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
+    case .unknown:
+      pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+      break
+    case .unauthorized:
+      pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
+      break
+    case .authorized:
+      pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+      break
+    default:
+      pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR)
     }
     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
-
-
+  
+  
   func requestPermission(command: CDVInvokedUrlCommand) {
     let type = command.argument(at: 0) as! String
-
+    
     self.pscope!.viewControllerForAlerts = self.viewController
     self.requestMethods![type]!()
-
+    
     let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
   }
