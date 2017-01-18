@@ -145,7 +145,7 @@ import CoreLocation
         self.pscope!.permissionButtonΒorderWidth = CGFloat(NumberFormatter().number(from: (config["permissionButtonΒorderWidth"])!)!)
       }
       if (self.isDefined(configItem: config["permissionButtonCornerRadius"] as AnyObject)) {
-        self.pscope!.permissionButtonCornerRadius = CGFloat(NumberFormatter().numberFromString(config["permissionButtonCornerRadius"])!)
+        self.pscope!.permissionButtonCornerRadius = CGFloat(NumberFormatter().number(from: (config["permissionButtonCornerRadius"])!)!)
       }
       if (self.isDefined(configItem: config["permissionLabelColor"] as AnyObject)) {
         self.pscope!.permissionLabelColor = UIColor.init(hexString: (config["permissionLabelColor"])!)
