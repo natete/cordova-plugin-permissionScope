@@ -110,12 +110,14 @@ import CoreLocation
     self.pscope!.disabledCancelActionTitle = self.defaultConfig!["disabledCancelActionTitle"] as? String
     self.pscope!.disabledDefaultActionTitle = self.defaultConfig!["disabledDefaultActionTitle"] as? String
 
-    if let config = command.argument(at: 0) as? [String: Any] {
-      if (self.isDefined(configItem: config["headerLabel"])) {
-        self.pscope!.headerLabel.text = config["headerLabel"]
+    if let config = command.argument(at: 0) as? [String: AnyObject] {
+      if let headerLabel = config["headerLabel"] {
+        if (self.isDefined(configItem: headerLabel)) {
+          self.pscope!.headerLabel.text = headerLabel as String
+        }
       }
-      if (self.isDefined(configItem: config["bodyLabel"])) {
-        self.pscope!.bodyLabel.text = config["bodyLabel"]
+      if (self.isDefined(configItem: config["bodyLabel"]!)) {
+        self.pscope!.bodyLabel.text = config["bodyLabel"]! as String
       }
       if (self.isDefined(configItem: config["closeButtonTextColor"])) {
         self.pscope!.closeButtonTextColor = UIColor.init(hexString: (config["closeButtonTextColor"])!)
