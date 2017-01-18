@@ -619,7 +619,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
         DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
                 self.getResultsForConfig { results in
-                  if let notificationResult = results.first(where: { $0.type == .Notifications }) {
+                  if let notificationResult = results.first(where: { $0.type == .notifications }) {
                     if notificationResult.status == .unknown {
                       self.showDeniedAlert(notificationResult.type)
                     } else {
@@ -650,9 +650,9 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
                     categories: notificationsPermissionSet)
             )
         case .unauthorized:
-            showDeniedAlert(.Notifications)
+            showDeniedAlert(.notifications)
         case .disabled:
-            showDisabledAlert(.Notifications)
+            showDisabledAlert(.notifications)
         case .authorized:
             detectAndCallback()
         }
@@ -1241,7 +1241,7 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
             permissionStatus = statusLocationInUse()
         case .contacts:
             permissionStatus = statusContacts()
-        case .Notifications:
+        case .notifications:
             permissionStatus = statusNotifications()
         case .microphone:
             permissionStatus = statusMicrophone()
