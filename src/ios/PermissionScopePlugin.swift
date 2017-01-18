@@ -114,64 +114,64 @@ import CoreLocation
       if (self.isDefined(configItem: config["headerLabel"] as AnyObject)) {
         self.pscope!.headerLabel.text = config["headerLabel"]
       }
-      if (self.isDefined(configItem: config["bodyLabel"]!)) {
+      if (self.isDefined(configItem: config["bodyLabel"] as AnyObject)) {
         self.pscope!.bodyLabel.text = config["bodyLabel"]
       }
       if (self.isDefined(configItem: config["closeButtonTextColor"] as AnyObject)) {
         self.pscope!.closeButtonTextColor = UIColor.init(hexString: config["closeButtonTextColor"]!)
       }
       
-      if (self.isDefined(configItem: config["closeButtonTitle"])) {
-        self.pscope!.closeButton.setTitle((config["closeButtonTitle"])!, forState: UIControlState.Normal)
+      if (self.isDefined(configItem: config["closeButtonTitle"] as AnyObject)) {
+        self.pscope!.closeButton.setTitle((config["closeButtonTitle"])!, for: UIControlState.normal)
       }
       self.pscope!.closeButton.sizeToFit()
       
-      if (self.isDefined(configItem: config["permissionButtonTextColor"])) {
+      if (self.isDefined(configItem: config["permissionButtonTextColor"] as AnyObject)) {
         self.pscope!.permissionButtonTextColor = UIColor.init(hexString: (config["permissionButtonTextColor"])!)
       }
-      if (self.isDefined(configItem: config["permissionButtonBorderColor"])) {
+      if (self.isDefined(configItem: config["permissionButtonBorderColor"] as AnyObject)) {
         self.pscope!.permissionButtonBorderColor = UIColor.init(hexString: (config["permissionButtonBorderColor"])!)
       }
-      if (self.isDefined(configItem: config["closeOffset"])) {
+      if (self.isDefined(configItem: config["closeOffset"] as AnyObject)) {
         self.pscope!.closeOffset = CGSizeFromString((config["closeOffset"])!)
       }
-      if (self.isDefined(configItem: config["authorizedButtonColor"])) {
+      if (self.isDefined(configItem: config["authorizedButtonColor"] as AnyObject)) {
         self.pscope!.authorizedButtonColor = UIColor.init(hexString: (config["authorizedButtonColor"])!)
       }
-      if (self.isDefined(configItem: config["unauthorizedButtonColor"])) {
+      if (self.isDefined(configItem: config["unauthorizedButtonColor"] as AnyObject)) {
         self.pscope!.unauthorizedButtonColor = UIColor.init(hexString: (config["unauthorizedButtonColor"])!)
       }
-      if (self.isDefined(configItem: config["permissionButtonΒorderWidth"])) {
-        self.pscope!.permissionButtonΒorderWidth = CGFloat(NumberFormatter().numberFromString((config["permissionButtonΒorderWidth"])!)!)
+      if (self.isDefined(configItem: config["permissionButtonΒorderWidth"] as AnyObject)) {
+        self.pscope!.permissionButtonΒorderWidth = CGFloat(NumberFormatter().number(from: (config["permissionButtonΒorderWidth"])!)!)
       }
-      if (self.isDefined(configItem: config["permissionButtonCornerRadius"]!)) {
+      if (self.isDefined(configItem: config["permissionButtonCornerRadius"] as AnyObject)) {
         self.pscope!.permissionButtonCornerRadius = CGFloat(NumberFormatter().numberFromString(config["permissionButtonCornerRadius"])!)
       }
-      if (self.isDefined(configItem: config["permissionLabelColor"])) {
+      if (self.isDefined(configItem: config["permissionLabelColor"] as AnyObject)) {
         self.pscope!.permissionLabelColor = UIColor.init(hexString: (config["permissionLabelColor"])!)
       }
-      if (self.isDefined(configItem: config["deniedAlertTitle"])) {
+      if (self.isDefined(configItem: config["deniedAlertTitle"] as AnyObject)) {
         self.pscope!.deniedAlertTitle = (config["deniedAlertTitle"])!
       }
-      if (self.isDefined(configItem: config["deniedAlertMessage"])) {
+      if (self.isDefined(configItem: config["deniedAlertMessage"] as AnyObject)) {
         self.pscope!.deniedAlertMessage = (config["deniedAlertMessage"])!
       }
-      if (self.isDefined(configItem: config["deniedCancelActionTitle"])) {
+      if (self.isDefined(configItem: config["deniedCancelActionTitle"] as AnyObject)) {
         self.pscope!.deniedCancelActionTitle = (config["deniedCancelActionTitle"])!
       }
-      if (self.isDefined(configItem: config["deniedDefaultActionTitle"])) {
+      if (self.isDefined(configItem: config["deniedDefaultActionTitle"] as AnyObject)) {
         self.pscope!.deniedDefaultActionTitle = (config["deniedDefaultActionTitle"])!
       }
-      if (self.isDefined(configItem: config["disabledAlertTitle"])) {
+      if (self.isDefined(configItem: config["disabledAlertTitle"] as AnyObject)) {
         self.pscope!.disabledAlertTitle = (config["deniedAlertTitle"])!
       }
-      if (self.isDefined(configItem: config["disabledAlertMessage"])) {
+      if (self.isDefined(configItem: config["disabledAlertMessage"] as AnyObject)) {
         self.pscope!.disabledAlertMessage = (config["deniedAlertMessage"])!
       }
-      if (self.isDefined(configItem: config["disabledCancelActionTitle"])) {
+      if (self.isDefined(configItem: config["disabledCancelActionTitle"] as AnyObject)) {
         self.pscope!.disabledCancelActionTitle = (config["disabledCancelActionTitle"])!
       }
-      if (self.isDefined(configItem: config["disabledDefaultActionTitle"])) {
+      if (self.isDefined(configItem: config["disabledDefaultActionTitle"] as AnyObject)) {
         self.pscope!.disabledDefaultActionTitle = (config["disabledDefaultActionTitle"])!
       }
     }

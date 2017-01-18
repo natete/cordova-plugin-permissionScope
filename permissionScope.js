@@ -26,3 +26,8 @@ types.forEach(function (type) {
 exports.show = function (success, error) {
   (0, _exec2.default)(success, error, 'PermissionScope', 'show');
 };
+
+
+exports.hasPermission = function (type, success, error) {
+  (0, _exec2.default)(success, error, 'PermissionScope', 'hasPermission', [type]);
+};
