@@ -85,7 +85,7 @@ import CoreLocation
   }
 
   func initialize(command: CDVInvokedUrlCommand) {
-    let config = command.argument(at: 0) as! [String: String]
+//    let config = command.argument(at: 0) as! [String: Any]
 
     self.pscope!.configuredPermissions = []
 
@@ -110,7 +110,7 @@ import CoreLocation
     self.pscope!.disabledCancelActionTitle = self.defaultConfig!["disabledCancelActionTitle"] as? String
     self.pscope!.disabledDefaultActionTitle = self.defaultConfig!["disabledDefaultActionTitle"] as? String
 
-    if (config != nil) {
+    if let config = command.argument(at: 0) as? [String: Any] {
       if (self.isDefined(configItem: config["headerLabel"])) {
         self.pscope!.headerLabel.text = config["headerLabel"]
       }
