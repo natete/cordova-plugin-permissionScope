@@ -32,3 +32,7 @@ types.forEach((type) => {
 exports.show = (success, error) => {
   exec(success, error, 'PermissionScope',  'show');
 };
+
+exports.hasPermission = (success, error) => {
+  exec(success, error, 'PermissionScope',  'hasPermission');
+};
