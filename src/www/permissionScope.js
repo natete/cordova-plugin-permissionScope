@@ -33,6 +33,6 @@ exports.show = (success, error) => {
   exec(success, error, 'PermissionScope',  'show');
 };
 
-exports.hasPermission = (success, error) => {
-  exec(success, error, 'PermissionScope',  'hasPermission');
+exports.hasPermission = (type, success, error) => {
+  exec(success, error, 'PermissionScope',  'hasPermission', [type]);
 };
