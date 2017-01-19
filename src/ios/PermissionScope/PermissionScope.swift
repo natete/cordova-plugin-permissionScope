@@ -1306,11 +1306,4 @@ typealias resultsForConfigClosure     = ([PermissionResult]) -> Void
 
         completionBlock(results)
     }
-    
-    @objc open func hasPermission(_ permission: Permission) {
-    
-    assert(configuredPermissions.count < 3, "Ask for three or fewer permissions at a time")
-    assert(configuredPermissions.first { $0.type == permission.type }.isNil, "Permission for \(permission.type) already set")
-  
-  }
 }
