@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   id="cordova-plugin-permissionScope"
-  version="2.1.1">
+  version="2.1.2">
   <name>PermissionScope</name>
   <license>Apache 2.0</license>
   <description>Cordova plugin to handle iOS permissions</description>
   <keywords>cordova,phonegap,permission,permissionScope</keywords>
 
   <platform name="ios">
+     <preference name="CONTACTS_USAGE_DESCRIPTION" default="This app needs contact access"/>
+     <config-file target="*-Info.plist" parent="NSContactsUsageDescription">
+       <string>$CONTACTS_USAGE_DESCRIPTION</string>
+     </config-file>
+    
+    <preference name="CALENDAR_USAGE_DESCRIPTION" default="This app needs calendar access"/>
+     <config-file target="*-Info.plist" parent="NSCalendarsUsageDescription">
+       <string>$CALENDAR_USAGE_DESCRIPTION</string>
+     </config-file>
+    
+    <preference name="BLUETOOTH_USAGE_DESCRIPTION" default="This app needs bluetooth access"/>
+     <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
+       <string>$BLUETOOTH_USAGE_DESCRIPTION</string>
+     </config-file>
+    
+    <preference name="MICROPHONE_USAGE_DESCRIPTION" default="This app needs microphone access"/>
+     <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
+       <string>$MICROPHONE_USAGE_DESCRIPTION</string>
+     </config-file>
+    
+    <preference name="MOTION_USAGE_DESCRIPTION" default="This app needs motion access"/>
+     <config-file target="*-Info.plist" parent="NSMotionUsageDescription">
+       <string>$MOTION_USAGE_DESCRIPTION</string>
+     </config-file>
+    
     <config-file target="config.xml" parent="/*">
       <feature name="PermissionScope">
         <param name="ios-package" value="PermissionScopePlugin" />
